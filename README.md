@@ -30,3 +30,28 @@ The auction system allows buyers and sellers to participate in a secure auction 
 
 1. Ensure Obliv-C is installed properly (path set to CILPATH in Makefile)
 2. Compile the code:
+   ```
+   make
+   ```
+3. Run the auction in server mode:
+   ```
+   ./a.out 1234 -- input1.txt
+   ```
+4. Run the auction in client mode (in a separate terminal):
+   ```
+   ./a.out 1234 localhost input2.txt
+   ```
+
+## Input Format
+
+Input files should contain 6 integers representing:
+- First three values: Buyer 1, 2, and 3's maximum bids (for party 1) or shares (for party 2)
+- Last three values: Seller 1, 2, and 3's minimum asks (for party 1) or shares (for party 2)
+
+## Security Considerations
+
+This implementation maintains privacy of buyer and seller values, revealing only the final matching results and prices. For detailed analysis of information leakage, please refer to the report.
+
+## License
+
+MIT License - See LICENSE file for details
