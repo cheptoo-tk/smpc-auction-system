@@ -1,0 +1,108 @@
+#include <obliv.oh>
+#include "auction.h"
+
+void auction(void* args) {
+  protocolIO *io = args;
+  
+  // Feed inputs from both parties
+  obliv int b1 = feedOblivInt(io->buyer1Share, 1) + feedOblivInt(io->buyer1Share, 2);
+  obliv int b2 = feedOblivInt(io->buyer2Share, 1) + feedOblivInt(io->buyer2Share, 2);
+  obliv int b3 = feedOblivInt(io->buyer3Share, 1) + feedOblivInt(io->buyer3Share, 2);
+
+  obliv int s1 = feedOblivInt(io->seller1Share, 1) + feedOblivInt(io->seller1Share, 2);
+  obliv int s2 = feedOblivInt(io->seller2Share, 1) + feedOblivInt(io->seller2Share, 2);
+  obliv int s3 = feedOblivInt(io->seller3Share, 1) + feedOblivInt(io->seller3Share, 2);
+
+  // Initialize buyer-seller matching results
+  obliv int R1 = 0;
+  obliv int R2 = 0;
+  obliv int R3 = 0;
+  
+  // Initialize costs
+  obliv int C1 = 0;
+  obliv int C2 = 0;
+  obliv int C3 = 0;
+  
+  // Track which sellers are matched (1 = matched, 0 = unmatched)
+  obliv int seller1Matched = 0;
+  obliv int seller2Matched = 0;
+  obliv int seller3Matched = 0;
+  
+  // Buyer 1 matching
+  obliv bool can_match_s1 = (b1 >= s1) & (seller1Matched == 0);
+  obliv bool can_match_s2 = (b1 >= s2) & (seller2Matched == 0);
+  obliv bool can_match_s3 = (b1 >= s3) & (seller3Matched == 0);
+  
+  obliv if (can_match_s1) {
+    R1 = 1;
+    seller1Matched = 1;
+    C1 = (b1 + s1) / 2;
+  } else {
+    obliv if (can_match_s2) {
+      R1 = 2;
+      seller2Matched = 1;
+      C1 = (b1 + s2) / 2;
+    } else {
+      obliv if (can_match_s3) {
+        R1 = 3;
+        seller3Matched = 1;
+        C1 = (b1 + s3) / 2;
+      }
+    }
+  }
+  
+  // Buyer 2 matching
+  obliv bool b2_match_s1 = (b2 >= s1) & (seller1Matched == 0);
+  obliv bool b2_match_s2 = (b2 >= s2) & (seller2Matched == 0);
+  obliv bool b2_match_s3 = (b2 >= s3) & (seller3Matched == 0);
+  
+  obliv if (b2_match_s1) {
+    R2 = 1;
+    seller1Matched = 1;
+    C2 = (b2 + s1) / 2;
+  } else {
+    obliv if (b2_match_s2) {
+      R2 = 2;
+      seller2Matched = 1;
+      C2 = (b2 + s2) / 2;
+    } else {
+      obliv if (b2_match_s3) {
+        R2 = 3;
+        seller3Matched = 1;
+        C2 = (b2 + s3) / 2;
+      }
+    }
+  }
+  
+  // Buyer 3 matching
+  obliv bool b3_match_s1 = (b3 >= s1) & (seller1Matched == 0);
+  obliv bool b3_match_s2 = (b3 >= s2) & (seller2Matched == 0);
+  obliv bool b3_match_s3 = (b3 >= s3) & (seller3Matched == 0);
+  
+  obliv if (b3_match_s1) {
+    R3 = 1;
+    seller1Matched = 1;
+    C3 = (b3 + s1) / 2;
+  } else {
+    obliv if (b3_match_s2) {
+      R3 = 2;
+      seller2Matched = 1;
+      C3 = (b3 + s2) / 2;
+    } else {
+      obliv if (b3_match_s3) {
+        R3 = 3;
+        seller3Matched = 1;
+        C3 = (b3 + s3) / 2;
+      }
+    }
+  }
+
+  // Only reveal the final results
+  revealOblivInt(&(io->R1), R1, 0);
+  revealOblivInt(&(io->R2), R2, 0);
+  revealOblivInt(&(io->R3), R3, 0);
+  
+  revealOblivInt(&(io->C1), C1, 0);
+  revealOblivInt(&(io->C2), C2, 0);
+  revealOblivInt(&(io->C3), C3, 0);
+}
